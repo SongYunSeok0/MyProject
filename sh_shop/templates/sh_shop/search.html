@@ -1,0 +1,18 @@
+{% extends 'sh_shop/base.html' %}
+{% block main-area %}
+<h3 class="mb-3">검색 결과: "{{ query }}"</h3>
+
+{% if posts %}
+  {% for post in posts %}
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">{{ post.brand }} - {{ post.type }}</h5>
+        <p class="card-text">{{ post.content }}</p>
+        <a href="{% url 'detail' post.pk %}" class="btn btn-primary">자세히 보기</a>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>검색 결과가 없습니다.</p>
+{% endif %}
+{% endblock %}

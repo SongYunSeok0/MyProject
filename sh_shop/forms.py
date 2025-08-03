@@ -4,4 +4,4 @@ from sh_shop.models import Post
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['type', 'brand', 'price', 'size', 'content', 'uploaded_image']
+        fields = ['type', 'gender','brand', 'price', 'size', 'content', 'uploaded_image']

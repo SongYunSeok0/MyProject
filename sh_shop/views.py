@@ -6,11 +6,14 @@ from .forms import PostForm
 def main(request):
     posts = Post.objects.all().order_by('-pk')
     categories = Category.objects.all()
+    type_choices = Post._meta.get_field('type').choices
     return render(request, template_name='sh_shop/main.html', context={'posts':posts,
-                                                                     'categories':categories})
+                                                                     'categories':categories,
+                                                                     'type_choices': type_choices,})
 
 def category(request, slug):
     categories = Category.objects.all()
+    type_choices = Post._meta.get_field('type').choices
     if slug =='no_category':
         # 미분류인 경우
         posts = Post.objects.filter(category=None)
@@ -18,16 +21,72 @@ def category(request, slug):
         category = Category.objects.get(slug=slug)
         posts = Post.objects.filter(category=category)
     return render(request, template_name='sh_shop/main.html',context={'posts':posts,
-                                                                    'categories':categories})
+                                                                    'categories':categories,
+                                                                    'type_choices': type_choices,})
 
 def detail(request, pk):
     post = Post.objects.get(pk=pk)
     categories = Category.objects.all()
+    type_choices = Post._meta.get_field('type').choices
     return render(request, template_name='sh_shop/detail.html', context={'post':post
-                                                                      ,'categories':categories})
+                                                                      ,'categories':categories,
+                                                                      'type_choices': type_choices,})
+
+def male(request):
+    posts = Post.objects.all()
+    categories = Category.objects.all()
+    type_choices = Post._meta.get_field('type').choices
+    return render(request, template_name='sh_shop/male.html', context={'posts':posts
+                                                                      ,'categories':categories,
+                                                                      'type_choices': type_choices,})
+
+def female(request):
+    posts = Post.objects.all()
+    categories = Category.objects.all()
+    type_choices = Post._meta.get_field('type').choices
+    return render(request, template_name='sh_shop/female.html', context={'posts':posts
+                                                                      ,'categories':categories,
+                                                                      'type_choices': type_choices,})
+
+def gender_filter(request, gender):
+    categories = Category.objects.all()
+    posts = Post.objects.filter(gender=gender).order_by('-pk')
+    type_choices = Post._meta.get_field('type').choices
+    return render(request, 'sh_shop/main.html', {
+        'posts': posts,
+        'categories': categories,
+        'type_choices': type_choices,
+    })
+
+def gender_type_filter(request, gender, type):
+    categories = Category.objects.all()
+    posts = Post.objects.filter(gender=gender, type=type).order_by('-pk')
+    type_choices = Post._meta.get_field('type').choices
+    return render(request, 'sh_shop/main.html', {
+        'posts': posts,
+        'categories': categories,
+        'type_choices': type_choices,
+    })
+
+def search(request):
+    query = request.GET.get('q', '')
+    categories = Category.objects.all()
+    type_choices = Post._meta.get_field('type').choices
+    if query:
+        posts = Post.objects.filter(content__icontains=query)
+    else:
+        posts = Post.objects.none()  # 또는 Post.objects.all()
+
+    return render(request, 'sh_shop/search.html', {
+        'query': query,
+        'posts': posts,
+        'categories': categories,
+        'type_choices': type_choices,
+    })
 
 def create(request):
     categories = Category.objects.all()
+    type_choices = Post._meta.get_field('type').choices
     if request.method == "POST":
         # 제출 버튼을 누른경우
         postform = PostForm(request.POST, request.FILES)
@@ -39,4 +98,5 @@ def create(request):
         postform = PostForm()
     return render(request, template_name='sh_shop/postform.html',
                   context={'postform':postform,
-                           'categories':categories})
+                           'categories':categories,
+                           'type_choices': type_choices,})
