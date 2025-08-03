@@ -11,4 +11,5 @@ urlpatterns = [
     path('gender/<str:gender>/', views.gender_filter, name='gender'),
     path('gender/<str:gender>/type/<str:type>/', views.gender_type_filter, name='gender_type'),
     path('search/', views.search, name='search'),
+    path('mypage/', views.mypage, name='mypage'),
 ]

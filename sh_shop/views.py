@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from .models import Post, Category
 from .forms import PostForm
+from django.db.models import Q
+
 # Create your views here.
 
 def main(request):
@@ -10,6 +12,14 @@ def main(request):
     return render(request, template_name='sh_shop/main.html', context={'posts':posts,
                                                                      'categories':categories,
                                                                      'type_choices': type_choices,})
+
+def mypage(request):
+    posts = Post.objects.all()
+    categories = Category.objects.all()
+    type_choices = Post._meta.get_field('type').choices
+    return render(request, template_name='sh_shop/mypage.html', context={'posts':posts
+                                                                      ,'categories':categories,
+                                                                      'type_choices': type_choices,})
 
 def category(request, slug):
     categories = Category.objects.all()
@@ -68,14 +78,23 @@ def gender_type_filter(request, gender, type):
         'type_choices': type_choices,
     })
 
+
 def search(request):
     query = request.GET.get('q', '')
     categories = Category.objects.all()
     type_choices = Post._meta.get_field('type').choices
+
     if query:
-        posts = Post.objects.filter(content__icontains=query)
+        posts = Post.objects.filter(
+            Q(type__icontains=query) |
+            Q(gender__icontains=query) |
+            Q(brand__icontains=query) |
+            Q(price__icontains=query) |
+            Q(size__icontains=query) |
+            Q(content__icontains=query)
+        ).order_by('-pk')
     else:
-        posts = Post.objects.none()  # 또는 Post.objects.all()
+        posts = Post.objects.none()  # 검색어 없으면 결과 없음
 
     return render(request, 'sh_shop/search.html', {
         'query': query,

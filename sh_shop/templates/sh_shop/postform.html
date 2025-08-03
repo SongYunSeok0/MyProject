@@ -1,16 +1,42 @@
 {% extends 'sh_shop/base.html'%}
 {% block main-area %}
-    <div class="my-2" style="font-size: 20px;">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="my-5">
-                {{ postform }}
-            </div>
-            <input type="submit">
-        </form>
-    </div>
-{% endblock %}
+<div class="my-2" style="font-size: 20px;">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="my-5">
+            {{ postform }}
+        </div>
+        <input type="submit">
+    </form>
+</div>
 
-{% block header %}
-    <h1 class="fw-bolder">글 올리기</h1>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const priceInput = document.getElementById('id_price');
+  if (!priceInput) return;
+
+  // 숫자만 입력되도록 (한글, 특수문자 등 제거)
+  priceInput.addEventListener('input', function () {
+    this.value = this.value.replace(/[^\d]/g, '');
+  });
+
+  // 포커스를 잃었을 때 쉼표 붙이기
+  priceInput.addEventListener('blur', function () {
+    const raw = this.value.replace(/,/g, '');
+    if (raw) {
+      const formatted = Number(raw).toLocaleString();
+      this.value = formatted;
+    }
+  });
+
+  // 제출 시 쉼표 제거
+  const form = priceInput.closest('form');
+  if (form) {
+    form.addEventListener('submit', function () {
+      priceInput.value = priceInput.value.replace(/,/g, '');
+    });
+  }
+});
+</script>
+</script>
 {% endblock %}

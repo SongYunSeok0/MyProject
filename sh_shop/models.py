@@ -33,7 +33,7 @@ class Post(models.Model):
     brand = models.CharField(max_length=100)
     price = models.IntegerField()
     size = models.CharField(max_length=3)
-    content = models.TextField(null=True, blank=True)
+    content = models.TextField(null=False, blank=False)
     uploaded_image = models.ImageField(upload_to='images/',
-                                       blank=True)
+                                       blank=False)
     
